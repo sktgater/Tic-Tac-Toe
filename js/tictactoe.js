@@ -15,10 +15,7 @@ var mediumbtn = $("#mediumbtn");
 var hardbtn = $("#hardbtn");
 
 // Game Variables
-var matrix = new Array(4);
-for (var i = 0; i < matrix.length; i++){
-	matrix[i] = new Array(4);
-};
+var matrix = build();
 reset();
 var mode = "hard";
 var gameDone = false;
@@ -88,6 +85,15 @@ squares.on("click", function(){
 	player2plays(matrix);
 });
 
+// Build a new all-0 matrix
+function build(){
+	var temp = new Array(4);
+	for (var i = 0; i < temp.length; i++){
+		temp[i] = new Array(4);
+	}
+	return temp;
+}
+
 // Reset all squares to be empty
 function reset(){
 	// Display Reset
@@ -118,20 +124,20 @@ function player2plays(matrix){
 var min_utility = -1000;
 var max_utility = 1000;
 
-function search(matrix){
+function search(state){
 
 	// assign utility variable v to max_value function call
-	var v = max_value(matrix, min_utility, max_utility);
-	// return the action in actions(matrix) with value v
+	var v = max_value(state, min_utility, max_utility);
+	// return the action in actions(state) with value v
 
 }
 
 // Given current state, return a list of possible actions (matrix position)
-function actions(matrix){
+function actions(state){
 	var result = []
-	for (var i = 0; i < matrix.length; i++){
-		for (var j = 0; j < matrix[0].length; j++){
-			if (matrix[i][j] == 0){
+	for (var i = 0; i < state.length; i++){
+		for (var j = 0; j < state[0].length; j++){
+			if (state[i][j] == 0){
 				result.push([i,j]);
 			}
 		}
@@ -140,45 +146,82 @@ function actions(matrix){
 }
 
 // Test if game is done
-function terminal_test(matrix){
+function terminal_test(state){
 	// Draw test
 	if (move_count == 16){
 		return 0
 	}
 
 	// Horizontal line test
-	for (var i = 0; i < matrix.length; i++){
-		if (matrix[i][0] == matrix[i][1] == matrix[i][2] == matrix[i][3] != 0){
-			return matrix[i][0];
+	for (var i = 0; i < state.length; i++){
+		if (state[i][0] == state[i][1] == state[i][2] == state[i][3] != 0){
+			return state[i][0];
 		}
 	}
 
 	// Vertical line test
-	for (var j = 0; j < matrix[0].length; j++){
-		if (matrix[0][j] == matrix[1][j] == matrix[2][j] == matrix[3][j] != 0){
-			return matrix[0][j];
+	for (var j = 0; j < state[0].length; j++){
+		if (state[0][j] == state[1][j] == state[2][j] == state[3][j] != 0){
+			return state[0][j];
 		}
 	}
 
 	// Diagonal line test
-	if (matrix[3][0] == matrix[2][1] == matrix[1][2] == matrix[0][3] != 0){
-		return matrix[3][0];
+	if (state[3][0] == state[2][1] == state[1][2] == state[0][3] != 0){
+		return state[3][0];
 	}
-	if (matrix[0][0] == matrix[1][1] == matrix[2][2] == matrix[3][3] != 0){
-		return matrix[0][0];
+	if (state[0][0] == state[1][1] == state[2][2] == state[3][3] != 0){
+		return state[0][0];
 	}
 	
-	// Unfinish test
+	// Unfinish game
 	return -1;
 }
 
-// Max search
-function max_value(matrix, alpha, beta){
-	if (terminal_test(matrix)){return }
-
-
+// Utility
+var utility = {
+	0: 0,
+	1: -1000,
+	2: 1000
 }
 
+// Max search
+function max_value(state, alpha, beta){
+	var test = terminal_test(state);
+	if (test >= 0){return utility[test]};
+	var v = min_utility;
+	actions(state).forEach(function(a){
+		v = Math.max(v, min_value(result(state, a, 2), alpha, beta));
+		if (v >= beta){return v;}
+		alpha = Math.max(alpha, v);
+	});
+	return v;
+}
+
+// Min search
+function min_value(state, alpha, beta){
+	var test = terminal_test(state);
+	if (test >= 0){return utility[test]};
+	var v = max_utility;
+	actions(state).forEach(function(a){
+		v = Math.min(v, max_value(result(state, a, 1), alpha, beta));
+		if (v <= alpha){return v;}
+		beta = Math.min(beta, v);
+	});
+	return v;
+}
+
+// result function. Take current matrix and an action, return resulting matrix
+function result(state, act, player){
+	var temp = build();
+	for (var i = 0; i < state.length; i++){
+		for (var j = 0; j < state[0].length; j++){
+			temp[i][j] = state[i][j];
+		}
+	}
+	temp[act[0]][act[1]] = player;
+	return temp;
+}
 
 
 
