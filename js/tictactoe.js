@@ -22,6 +22,7 @@ for (var i = 0; i < matrix.length; i++){
 reset();
 var mode = "hard";
 var gameDone = false;
+var move_count = 0; 		// count how many moves so far
 
 // Easy Button
 easybtn.on("click", function(){
@@ -78,13 +79,13 @@ resetBtn.on("click", function () {
 squares.on("click", function(){
 	$(this).addClass("player1");
 	// Change cell value in matrix
-	var position = $(this).attr('id');
-	var row = position.charAt(1);
-	var col = position.charAt(3);
-	matrix[row][col] = 1;
-
+	 var position = $(this).attr('id');
+	 var row = position.charAt(1);
+	 var col = position.charAt(3);
+	 matrix[row][col] = 1;
+	 move_count++;
 	// Player 2 plays
-	player2plays();
+	player2plays(matrix);
 });
 
 // Reset all squares to be empty
@@ -95,6 +96,7 @@ function reset(){
 
 	// Game Data Reset
 	gameDone = false;
+	move_count = 0;
 	for (var i= 0; i < matrix.length; i++){
 		for (var j = 0; j < matrix[0].length; j++){
 			matrix[i][j] = 0;
@@ -103,9 +105,83 @@ function reset(){
 }
 
 // Player 2 Plays
-function player2plays(){
+function player2plays(matrix){
+	// Calculate right move
+	var move = search(matrix);
+	// Change matrix cell
+
+	// Change display
 
 }
+
+// Player 2 finds its next move by looking at the current state
+var min_utility = -1000;
+var max_utility = 1000;
+
+function search(matrix){
+
+	// assign utility variable v to max_value function call
+	var v = max_value(matrix, min_utility, max_utility);
+	// return the action in actions(matrix) with value v
+
+}
+
+// Given current state, return a list of possible actions (matrix position)
+function actions(matrix){
+	var result = []
+	for (var i = 0; i < matrix.length; i++){
+		for (var j = 0; j < matrix[0].length; j++){
+			if (matrix[i][j] == 0){
+				result.push([i,j]);
+			}
+		}
+	}
+	return result
+}
+
+// Test if game is done
+function terminal_test(matrix){
+	// Draw test
+	if (move_count == 16){
+		return 0
+	}
+
+	// Horizontal line test
+	for (var i = 0; i < matrix.length; i++){
+		if (matrix[i][0] == matrix[i][1] == matrix[i][2] == matrix[i][3] != 0){
+			return matrix[i][0];
+		}
+	}
+
+	// Vertical line test
+	for (var j = 0; j < matrix[0].length; j++){
+		if (matrix[0][j] == matrix[1][j] == matrix[2][j] == matrix[3][j] != 0){
+			return matrix[0][j];
+		}
+	}
+
+	// Diagonal line test
+	if (matrix[3][0] == matrix[2][1] == matrix[1][2] == matrix[0][3] != 0){
+		return matrix[3][0];
+	}
+	if (matrix[0][0] == matrix[1][1] == matrix[2][2] == matrix[3][3] != 0){
+		return matrix[0][0];
+	}
+	
+	// Unfinish test
+	return -1;
+}
+
+// Max search
+function max_value(matrix, alpha, beta){
+	if (terminal_test(matrix)){return }
+
+
+}
+
+
+
+
 
 
 
