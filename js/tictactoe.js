@@ -1,3 +1,10 @@
+//Author: Li Wang
+//Date: Apr 24 2017
+//Title: Tic Tac Toe game with AI experiments
+//Description:
+//This game is for testing various AI algorithms for Tic Tac Game.
+
+
 // Select Elements
 var squares = $(".square");
 var messageDisaplay = $("#message");
