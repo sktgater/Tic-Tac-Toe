@@ -1,0 +1,108 @@
+body {
+	background: #a8175b;
+	margin: 0;
+	font-family: "Montserrat", "Avenir";
+}
+
+h1 {
+	text-align: center;
+	color: white;
+	background-color: steelblue;
+	margin: 0;
+	/* Remove bold */
+	font-weight: normal;
+	text-transform: uppercase;
+	/* Add line space */
+	line-height: 1.1;
+	/* Set top & down padding to 20px. left & right 0 */
+	padding: 20px 0;
+}
+
+.square{
+
+	/* Square Size. Each square takes width of 30% of container space */
+	width: 24%;
+	padding-bottom: 24%;
+
+	/* Square Initialized as White Color */
+	background-color: white;
+
+	/* margin between each square */
+	margin: 0.5%;
+
+	/* arrange from left */
+	float: left;
+
+	/* Round-corner squares, transition time */
+	border-radius: 15%;
+	transition: 0.3s;
+	-webkit-transition: 0.3s;
+	-moz-transition: 0.3s;
+}
+
+#container{
+	/* set container to have top-down 0 margin, left-right auto margin 
+	Trick to center the container */
+	margin: 0 auto;
+
+	/* container max width */
+	max-width: 600px;
+	max-height: 600px;
+
+	/* Space between container and strip */
+	padding-top: 35px;
+
+}
+
+#strip{
+	background-color: white;
+	height: 30px;
+	text-align: center;
+}
+
+/* Game mode button styling when selected*/
+.selected{
+	color: white;
+	background: steelblue;
+}
+
+/* game mode button styling */
+button{
+	border: none;
+	background: white;
+	text-transform: uppercase;
+	/* set letters take up all space */
+	height: 100%;
+	color: steelblue;
+	/* make letter bold */
+	font-weight: 700;
+	letter-spacing: 1px;
+	transition: all 0.2s;
+	outline: none;
+}
+
+/* button hover effects */
+button:hover{
+	color: white;
+	background-color: steelblue;
+}
+
+/* Game Message Box */
+#message{
+	/* make sure message has block space */
+	display: inline-block;
+
+	/* set width of block to be 20% of the div (strip here) */
+	width: 20%;
+}
+
+/* Player 1 Selection */
+.player1 {
+	background-color: blue;
+}
+
+/* Player 2 (Computer) Selection */
+.player2 {
+	background-color: green;
+}
+
