@@ -4,7 +4,7 @@
 //Description:
 //This game is for testing various AI algorithms in Tic Tac Toe.
 
-// Select Elements
+// Select Page Elements
 var squares = $(".square");
 var messageDisaplay = document.querySelector("#message");
 var h1 = $("h1");
@@ -12,6 +12,8 @@ var resetBtn = $("#reset");
 var easybtn = $("#easybtn");
 var mediumbtn = $("#mediumbtn");
 var hardbtn = $("#hardbtn");
+var humanfirst = $("#humanfirst");
+var aifirst = $("#aifirst");
 
 // Game Variables
 var matrix = build();
@@ -70,6 +72,30 @@ hardbtn.on("click", function(){
 resetBtn.on("click", function () {
 	// reset
 	reset();
+});
+
+// Human First Button
+humanfirst.on("click", function(){
+
+	// Display change
+	humanfirst.addClass("selected");
+	aifirst.removeClass("selected");
+
+	// reset all squares
+	reset();
+});
+
+// AI First Button
+aifirst.on("click", function(){
+	aifirst.addClass("selected");
+	humanfirst.removeClass("selected");
+
+	//reset all squares
+	reset();
+
+	// AI plays
+	player2plays();
+
 });
 
 // Player 1 clicks on squares; mark player 1's move
@@ -530,5 +556,3 @@ function reset(){
 	}
 	action = undefined;
 }
-
-
