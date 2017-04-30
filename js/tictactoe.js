@@ -145,7 +145,7 @@ function search(state){
 
 	// assign utility variable v to max_value function call
 	node_num++;
-	var v = max_value(state, min_utility, max_utility);
+	var v = max_value(state, min_utility, max_utility, 0);
 
 	// Display Statistics
 	console.log("No Cutoff Appears");
@@ -158,14 +158,15 @@ function search(state){
 }
 
 // Max search
-function max_value(state, alpha, beta){
+function max_value(state, alpha, beta, previous_depth){
 	var test = terminal_test(state);
 	if (test >= 0){return utility[test]};
+	if (depth < previous_depth + 1){depth++;}
 	var v = min_utility;
 	var max_actions = actions(state);
 	node_num += max_actions.length;
 	for (var i = 0; i < max_actions.length; i++){
-		var search_res = min_value(result(state, max_actions[i], 2), alpha, beta);
+		var search_res = min_value(result(state, max_actions[i], 2), alpha, beta, previous_depth+1);
 		if (search_res >= v){
 			action = max_actions[i];
 			v = search_res;
@@ -181,14 +182,15 @@ function max_value(state, alpha, beta){
 }
 
 // Min search
-function min_value(state, alpha, beta){
+function min_value(state, alpha, beta, previous_depth){
 	var test = terminal_test(state);
 	if (test >= 0){return utility[test]};
+	if (depth < previous_depth + 1){depth++;}
 	var v = max_utility;
 	var min_actions = actions(state);
 	node_num += min_actions.length;
 	for (var i = 0; i < min_actions.length; i++){
-		var search_res = max_value(result(state, min_actions[i], 1), alpha, beta);
+		var search_res = max_value(result(state, min_actions[i], 1), alpha, beta, previous_depth+1);
 		v = Math.min(v, search_res);
 		if (v <= alpha){
 			min_prune++;
