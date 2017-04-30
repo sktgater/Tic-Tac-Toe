@@ -72,7 +72,7 @@ resetBtn.on("click", function () {
 	reset();
 });
 
-// Player 1 Clicks on squares. Change color to blue to mark player 1's move
+// Player 1 clicks on squares; mark player 1's move
 // Update matrix for player 1. Then player 2 plays
 squares.on("click", function(){
 	$(this).addClass("player1");
@@ -121,8 +121,8 @@ function player2plays(){
 	if (mode == "hard"){
 		search(matrix);
 	}
-	else if (mode == "medium"){
-
+	else {
+		evalplay(matrix);
 	}
 	// Change matrix cell
 	matrix[action[0]][action[1]] = 2;
@@ -135,12 +135,25 @@ function player2plays(){
 }
 
 /********************* Alpha-Beta Search for Player 2 *********************/
+var depth = 0,
+	node_num = 0,
+	max_prune = 0,
+	min_prune = 0;
 
 // Player 2 finds its next move by alpha-beta search
 function search(state){
 
 	// assign utility variable v to max_value function call
+	node_num++;
 	var v = max_value(state, min_utility, max_utility);
+
+	// Display Statistics
+	console.log("No Cutoff Appears");
+	console.log("Max Depth: " + depth);
+	console.log("Number of Nodes Generated: " + node_num);
+	console.log("Number of Pruning in MAX-VALUE: " + max_prune);
+	console.log("Number of Pruning in MIN-VALUE: " + min_prune);
+	depth = node_num = max_prune = min_prune = 0;
 
 }
 
@@ -150,13 +163,18 @@ function max_value(state, alpha, beta){
 	if (test >= 0){return utility[test]};
 	var v = min_utility;
 	var max_actions = actions(state);
+	node_num += max_actions.length;
 	for (var i = 0; i < max_actions.length; i++){
 		var search_res = min_value(result(state, max_actions[i], 2), alpha, beta);
 		if (search_res >= v){
 			action = max_actions[i];
 			v = search_res;
 		}
-		if (v >= beta){return v;}
+		if (v >= beta){
+			max_prune++;
+			node_num -= (max_actions.length - i - 1);
+			return v;
+		}
 		alpha = Math.max(alpha, v);
 	}
 	return v;
@@ -168,28 +186,48 @@ function min_value(state, alpha, beta){
 	if (test >= 0){return utility[test]};
 	var v = max_utility;
 	var min_actions = actions(state);
+	node_num += min_actions.length;
 	for (var i = 0; i < min_actions.length; i++){
-		var search_res = max_value(result(state, min_actions[i], 2), alpha, beta);
+		var search_res = max_value(result(state, min_actions[i], 1), alpha, beta);
 		v = Math.min(v, search_res);
-		if (v <= alpha){return v;}
+		if (v <= alpha){
+			min_prune++;
+			node_num -= (min_actions.length - i - 1);
+			return v;
+		}
 		beta = Math.min(beta, v);
 	}
 	return v;
 }
 
-/********************* Medium Mode for Player 2 *********************/
-function mediumplay(state){
+/********************* Easy & Medium Mode for Player 2 *********************/
+function evalplay(state){
 	var test = terminal_test(state);
 	if (test >= 0){return utility[test]};
 
 	var possibleActions = actions(state);
-	var v;
+	var v = min_utility;
 	for (var i = 0; i < possibleActions.length; i++){
-		result(state, possibleActions[i], 2)
-	}
+		var next_state = result(state, possibleActions[i], 2);
 
+		// terminal winning state found. Take the action
+		if (terminal_test(next_state) == 2){
+			action = possibleActions[i];
+			v = max_utility;
+			break;
+		}
+
+		// non-terminal state. Calling evaluation function
+		var u = eval(next_state);
+		if (u >= v){
+			action = possibleActions[i];
+			v = u;
+		}
+	}
+	return v;
 }
 
+// eval function. Takes in current state and returns expected utility
 function eval(state){
 	var dic = {
 		x3: 0,
@@ -202,7 +240,7 @@ function eval(state){
 	var xcnt = 0,
 		ocnt = 0;
 
-	// Horizontal line test
+	// Horizontal lines test
 	for (var i = 0; i < state.length; i++){
 		for (var j = 0; j < state[0].length; j++){
 			if (state[i][j] == 1){ocnt++;}
@@ -217,31 +255,31 @@ function eval(state){
 		// has only X or only O. Record.
 		switch(xcnt){
 			case 1:
-				dic[x1]++;
+				dic.x1++;
 				break;
 			case 2:
-				dic[x2]++;
+				dic.x2++;
 				break;
 			case 3:
-				dic[x3]++;
+				dic.x3++;
 				break;
 		}
 		switch(ocnt){
 			case 1:
-				dic[o1]++;
+				dic.o1++;
 				break;
 			case 2:
-				dic[o2]++;
+				dic.o2++;
 				break;
 			case 3:
-				dic[o3]++;
+				dic.o3++;
 				break;
 		}
 		// reset for next row
 		xcnt = ocnt = 0;
 
 	}
-	// Vertical line test
+	// Vertical lines test
 	for (var j = 0; j < state[0].length; j++){
 		for (var i = 0; i < state.length; i++){
 			if (state[i][j] == 1){ocnt++;}
@@ -256,24 +294,24 @@ function eval(state){
 		// has only X or only O. Record.
 		switch(xcnt){
 			case 1:
-				dic[x1]++;
+				dic.x1++;
 				break;
 			case 2:
-				dic[x2]++;
+				dic.x2++;
 				break;
 			case 3:
-				dic[x3]++;
+				dic.x3++;
 				break;
 		}
 		switch(ocnt){
 			case 1:
-				dic[o1]++;
+				dic.o1++;
 				break;
 			case 2:
-				dic[o2]++;
+				dic.o2++;
 				break;
 			case 3:
-				dic[o3]++;
+				dic.o3++;
 				break;
 		}
 		// reset for next column
@@ -290,24 +328,24 @@ function eval(state){
 	if (!(xcnt != 0 && ocnt != 0)){
 		switch(xcnt){
 			case 1:
-				dic[x1]++;
+				dic.x1++;
 				break;
 			case 2:
-				dic[x2]++;
+				dic.x2++;
 				break;
 			case 3:
-				dic[x3]++;
+				dic.x3++;
 				break;
 		}
 		switch(ocnt){
 			case 1:
-				dic[o1]++;
+				dic.o1++;
 				break;
 			case 2:
-				dic[o2]++;
+				dic.o2++;
 				break;
 			case 3:
-				dic[o3]++;
+				dic.o3++;
 				break;
 		}
 	}
@@ -321,32 +359,40 @@ function eval(state){
 	if (!(xcnt != 0 && ocnt != 0)){
 		switch(xcnt){
 			case 1:
-				dic[x1]++;
+				dic.x1++;
 				break;
 			case 2:
-				dic[x2]++;
+				dic.x2++;
 				break;
 			case 3:
-				dic[x3]++;
+				dic.x3++;
 				break;
 		}
 		switch(ocnt){
 			case 1:
-				dic[o1]++;
+				dic.o1++;
 				break;
 			case 2:
-				dic[o2]++;
+				dic.o2++;
 				break;
 			case 3:
-				dic[o3]++;
+				dic.o3++;
 				break;
 		}
 	}
 	xcnt = ocnt = 0;
 
-	var res = 6 * dic[x3] + 3 * dic[x2] + dic[x1] - (6 * dic[o3] + 3 * dic[o2] + dic[o1]);
+	// Calculate utility using evaluation function based on difficulty mode
+	var res;
+	if (mode == "easy"){
+		res = 6 * dic.x3 + 3 * dic.x2 + dic.x1 - (6 * dic.o3 + 3 * dic.o2 + dic.o1);
+	}
+	else if (mode == "medium"){
+		res = 100 * dic.x3 + 10 * dic.x2 + dic.x1 - (100 * dic.o3 + 10 * dic.o2 + dic.o1);
+	} 
 	return res;
 }
+
 /********************* Helper functions below *********************/
 
 // result function. Take current matrix and an action, return resulting matrix
@@ -423,7 +469,7 @@ var utility = {
 // Given current state, return a list of possible actions (matrix position)
 function actions(state){
 	var result = []
-
+	
 	// shuffle an array. This is to randomize actions array
 	function shuffle(array) {
   		var currentIndex = array.length, temporaryValue, randomIndex;
@@ -443,7 +489,7 @@ function actions(state){
 
   		return array;
 	}
-
+	
 	// find all cells in matrix that has value 0. It is a possible action.
 	for (var i = 0; i < state.length; i++){
 		for (var j = 0; j < state[0].length; j++){
@@ -454,6 +500,7 @@ function actions(state){
 	}
 
 	result = shuffle(result);
+
 	return result
 }
 
@@ -481,14 +528,5 @@ function reset(){
 	}
 	action = undefined;
 }
-
-
-
-
-
-
-
-
-
 
 
