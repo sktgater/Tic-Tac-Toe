@@ -20,7 +20,7 @@ reset();
 var mode = "hard";
 var min_utility = -1000;
 var max_utility = 1000;
-var action;			// global variable "action" that saves the action in DFS
+var action;			// global variable "action" that saves the player 2's action
 
 // Easy Button
 easybtn.on("click", function(){
@@ -121,7 +121,9 @@ function player2plays(){
 	if (mode == "hard"){
 		search(matrix);
 	}
-	
+	else if (mode == "medium"){
+
+	}
 	// Change matrix cell
 	matrix[action[0]][action[1]] = 2;
 	
@@ -132,7 +134,9 @@ function player2plays(){
 	move_count++;
 }
 
-// Player 2 finds its next move by looking at the current state
+/********************* Alpha-Beta Search for Player 2 *********************/
+
+// Player 2 finds its next move by alpha-beta search
 function search(state){
 
 	// assign utility variable v to max_value function call
@@ -173,6 +177,176 @@ function min_value(state, alpha, beta){
 	return v;
 }
 
+/********************* Medium Mode for Player 2 *********************/
+function mediumplay(state){
+	var test = terminal_test(state);
+	if (test >= 0){return utility[test]};
+
+	var possibleActions = actions(state);
+	var v;
+	for (var i = 0; i < possibleActions.length; i++){
+		result(state, possibleActions[i], 2)
+	}
+
+}
+
+function eval(state){
+	var dic = {
+		x3: 0,
+		x2: 0,
+		x1: 0,
+		o3: 0,
+		o2: 0,
+		o1: 0
+	}
+	var xcnt = 0,
+		ocnt = 0;
+
+	// Horizontal line test
+	for (var i = 0; i < state.length; i++){
+		for (var j = 0; j < state[0].length; j++){
+			if (state[i][j] == 1){ocnt++;}
+			else if (state[i][j] == 2){xcnt++;}
+		}
+		// this line has both X and O. Not interested.
+		if (xcnt != 0 && ocnt != 0){
+			xcnt = 0;
+			ocnt = 0;
+			continue;
+		}
+		// has only X or only O. Record.
+		switch(xcnt){
+			case 1:
+				dic[x1]++;
+				break;
+			case 2:
+				dic[x2]++;
+				break;
+			case 3:
+				dic[x3]++;
+				break;
+		}
+		switch(ocnt){
+			case 1:
+				dic[o1]++;
+				break;
+			case 2:
+				dic[o2]++;
+				break;
+			case 3:
+				dic[o3]++;
+				break;
+		}
+		// reset for next row
+		xcnt = ocnt = 0;
+
+	}
+	// Vertical line test
+	for (var j = 0; j < state[0].length; j++){
+		for (var i = 0; i < state.length; i++){
+			if (state[i][j] == 1){ocnt++;}
+			else if (state[i][j] == 2){xcnt++;}
+		}
+		// this line has both X and O. Not interested.
+		if (xcnt != 0 && ocnt != 0){
+			xcnt = 0;
+			ocnt = 0;
+			continue;
+		}
+		// has only X or only O. Record.
+		switch(xcnt){
+			case 1:
+				dic[x1]++;
+				break;
+			case 2:
+				dic[x2]++;
+				break;
+			case 3:
+				dic[x3]++;
+				break;
+		}
+		switch(ocnt){
+			case 1:
+				dic[o1]++;
+				break;
+			case 2:
+				dic[o2]++;
+				break;
+			case 3:
+				dic[o3]++;
+				break;
+		}
+		// reset for next column
+		xcnt = ocnt = 0;
+
+	}
+
+	// Diagonal line test
+	// 45 degrees line
+	for (var i = 3, j = 0; i >= 0, j <= 3; i--, j++){
+		if (state[i][j] == 1){ocnt++;}
+		else if (state[i][j] == 2){xcnt++;}
+	}
+	if (!(xcnt != 0 && ocnt != 0)){
+		switch(xcnt){
+			case 1:
+				dic[x1]++;
+				break;
+			case 2:
+				dic[x2]++;
+				break;
+			case 3:
+				dic[x3]++;
+				break;
+		}
+		switch(ocnt){
+			case 1:
+				dic[o1]++;
+				break;
+			case 2:
+				dic[o2]++;
+				break;
+			case 3:
+				dic[o3]++;
+				break;
+		}
+	}
+	xcnt = ocnt = 0;
+
+	// 135 degrees line
+	for (var i = 0, j = 0; i <= 3, j <= 3; i++, j++){
+		if (state[i][j] == 1){ocnt++;}
+		else if (state[i][j] == 2){xcnt++;}
+	}
+	if (!(xcnt != 0 && ocnt != 0)){
+		switch(xcnt){
+			case 1:
+				dic[x1]++;
+				break;
+			case 2:
+				dic[x2]++;
+				break;
+			case 3:
+				dic[x3]++;
+				break;
+		}
+		switch(ocnt){
+			case 1:
+				dic[o1]++;
+				break;
+			case 2:
+				dic[o2]++;
+				break;
+			case 3:
+				dic[o3]++;
+				break;
+		}
+	}
+	xcnt = ocnt = 0;
+
+	var res = 6 * dic[x3] + 3 * dic[x2] + dic[x1] - (6 * dic[o3] + 3 * dic[o2] + dic[o1]);
+	return res;
+}
 /********************* Helper functions below *********************/
 
 // result function. Take current matrix and an action, return resulting matrix
