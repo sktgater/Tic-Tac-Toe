@@ -38,3 +38,8 @@ in JavaScript Console:
 - total number of nodes generated
 - number of times number of times pruning occurred within the MAX-VALUE function 
 - number of times pruning occurred within the MIN-VALUE function
+
+
+Complete game source code is also available on the github at:
+
+https://github.com/sktgater/Tic-Tac-Toe
