@@ -104,13 +104,16 @@ button:hover{
 	width: 20%;
 }
 
-/* Player 1 Selection */
-.player1 {
-	background-color: blue;
+i {
+	margin: 0 auto;
+	height: 80%;
+	width: 80%;
 }
 
-/* Player 2 (Computer) Selection */
-.player2 {
-	background-color: green;
+.player1{
+	background-color: #4e5edb;
 }
 
+.player2{
+	background-color: #4edb76;
+}

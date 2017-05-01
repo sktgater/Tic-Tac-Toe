@@ -72,6 +72,9 @@ hardbtn.on("click", function(){
 resetBtn.on("click", function () {
 	// reset
 	reset();
+	if (aifirst.hasClass("selected")){
+		player2plays();
+	}
 });
 
 // Human First Button
@@ -94,7 +97,14 @@ aifirst.on("click", function(){
 	reset();
 
 	// AI plays
+	var previous_mode;
+	if (mode == "hard"){
+		previous_mode = "hard";
+		mode = "easy";
+	}
 	player2plays();
+	console.log("Cutoff Occurs!");
+	mode = previous_mode;
 
 });
 
@@ -146,6 +156,7 @@ function player2plays(){
 	// Calculate right move
 	if (mode == "hard"){
 		search(matrix);
+
 	}
 	else {
 		evalplay(matrix);
