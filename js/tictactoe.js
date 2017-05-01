@@ -101,9 +101,9 @@ aifirst.on("click", function(){
 	if (mode == "hard"){
 		previous_mode = "hard";
 		mode = "easy";
+		console.log("Cutoff Occurs!");
 	}
 	player2plays();
-	console.log("Cutoff Occurs!");
 	mode = previous_mode;
 
 });
@@ -557,6 +557,7 @@ function reset(){
 	// Display Reset
 	squares.removeClass("player1 player2");
 	messageDisaplay.textContent = "";
+	console.clear();
 
 	// Game Data Reset
 	move_count = 0;
