@@ -2,7 +2,7 @@
 //Date: Apr 24 2017
 //Title: Tic Tac Toe game with AI experiments
 //Description:
-//This game is for testing various AI algorithms in Tic Tac Toe.
+//This web-based 4 x 4 tic-tac-toe game implements AI for human-computer competition.
 
 // Select Page Elements
 var squares = $(".square");

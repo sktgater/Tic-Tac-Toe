@@ -36,7 +36,7 @@ in JavaScript Console:
 - whether cutoff occurs
 - maximum depth reached while searching
 - total number of nodes generated
-- number of times number of times pruning occurred within the MAX-VALUE function 
+- number of times pruning occurred within the MAX-VALUE function 
 - number of times pruning occurred within the MIN-VALUE function
 
 
