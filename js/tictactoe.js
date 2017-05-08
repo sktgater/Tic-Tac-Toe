@@ -37,6 +37,10 @@ easybtn.on("click", function(){
 	// Change game to EASY setting
 	mode = "easy";
 
+	// If in AI-First mode, AI plays
+	if (aifirst.hasClass("selected")){
+		player2plays();
+	}
 });
 
 // Medium Button
@@ -51,6 +55,10 @@ mediumbtn.on("click", function(){
 	// Change game to MEDIUM setting
 	mode = "medium";
 
+	// If in AI-First mode, AI plays
+	if (aifirst.hasClass("selected")){
+		player2plays();
+	}
 });
 
 
@@ -66,6 +74,10 @@ hardbtn.on("click", function(){
 	// Change game to HARD setting
 	mode = "hard";
 
+	// If in AI-First mode, AI plays
+	if (aifirst.hasClass("selected")){
+		player2plays();
+	}
 });
 
 // Reset button
@@ -97,15 +109,8 @@ aifirst.on("click", function(){
 	reset();
 
 	// AI plays
-	var previous_mode;
-	if (mode == "hard"){
-		previous_mode = "hard";
-		mode = "easy";
-		console.log("Cutoff Occurs!");
-	}
 	player2plays();
-	mode = previous_mode;
-
+	
 });
 
 // Player 1 clicks on squares; mark player 1's move
@@ -155,12 +160,21 @@ function player2plays(){
 
 	// Calculate right move
 	if (mode == "hard"){
-		search(matrix);
-
+		if (move_count == 0){
+			evalplay(matrix);
+			console.log("Cutoff Appears!");
+		}
+		else{
+			search(matrix);
+		}
 	}
-	else {
+	else if (mode == "medium") {
 		evalplay(matrix);
 	}
+	else {
+		action = actions(matrix)[0];
+	}
+
 	// Change matrix cell
 	matrix[action[0]][action[1]] = 2;
 	
@@ -171,7 +185,7 @@ function player2plays(){
 	move_count++;
 }
 
-/********************* Alpha-Beta Search for Player 2 *********************/
+/**************** Hard mode Alpha-Beta Search for Player 2 ************/
 var depth = 0,
 	node_num = 0,
 	max_prune = 0,
@@ -239,7 +253,8 @@ function min_value(state, alpha, beta, previous_depth){
 	return v;
 }
 
-/********************* Easy & Medium Mode for Player 2 *********************/
+/****** Medium Mode for Player 2. Only using eval function to play ******/
+
 function evalplay(state){
 	var test = terminal_test(state);
 	if (test >= 0){return utility[test]};
@@ -266,7 +281,8 @@ function evalplay(state){
 	return v;
 }
 
-// eval function. Takes in current state and returns expected utility
+// eval function
+// Takes in current state and returns expected utility
 function eval(state){
 	var dic = {
 		x3: 0,
@@ -422,13 +438,8 @@ function eval(state){
 	xcnt = ocnt = 0;
 
 	// Calculate utility using evaluation function based on difficulty mode
-	var res;
-	if (mode == "easy"){
-		res = 6 * dic.x3 + 3 * dic.x2 + dic.x1 - (6 * dic.o3 + 3 * dic.o2 + dic.o1);
-	}
-	else if (mode == "medium"){
-		res = 100 * dic.x3 + 10 * dic.x2 + dic.x1 - (100 * dic.o3 + 10 * dic.o2 + dic.o1);
-	} 
+	var res = 6 * dic.x3 + 3 * dic.x2 + dic.x1 - (6 * dic.o3 + 3 * dic.o2 + dic.o1);
+	
 	return res;
 }
 
