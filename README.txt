@@ -19,10 +19,10 @@ Use web browser to open tictactoe.html. No other program needed.
 Design:
 
 This game has three modes for player to choose: easy, medium, hard. 
-Easy and medium modes implement AI with different evaluation functions to determine its best move.
-Medium mode has a different evaluation function that performs better than the one in easy mode.
+Easy mode, AI only plays random move. 
+Medium mode implements AI with evaluation function to determine its best move.
 Hard mode implements alpha-beta search algorithm for determinating next move.
-If time spent calculating next best action is longer than ten (10) seconds, alpha-beta search algorithm is cut off and use the evaluation function in "easy" mode to compute expected utility.
+If time spent calculating next best action is longer than ten (10) seconds, alpha-beta search algorithm is cut off and use the evaluation function in "medium" mode to compute expected utility.
 
 The Core Rules Designing the Game Strategy:
 Rule 1: If the AI player has a winning move, take it.
